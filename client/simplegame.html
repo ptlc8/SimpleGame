@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+		<title>SG !</title>
+		<script src='phaser.js'></script>
+		<style type="text/css">
+		html, body {height: 100%; width: 100%; margin: 0; padding: 0; text-align: center;}
+		span.display {color: white; text-shadow: 1px 1px 0 #000,	-1px 1px 0 #000,	1px -1px 0 #000,	-1px -1px 0 #000,	0px 1px 0 #000,	0px -1px 0 #000,	-1px 0px 0 #000,	1px 0px 0 #000,	2px 2px 0 #000,	-2px 2px 0 #000,	2px -2px 0 #000,	-2px -2px 0 #000,	0px 2px 0 #000,	0px -2px 0 #000,	-2px 0px 0 #000,	2px 0px 0 #000,	1px 2px 0 #000,	-1px 2px 0 #000,	1px -2px 0 #000,	-1px -2px 0 #000,	2px 1px 0 #000,	-2px 1px 0 #000,	2px -1px 0 #000,	-2px -1px 0 #000; font-size: 2em;}
+		#game-div {position: relative; margin: 0 auto;}
+		#game-div:fullscreen {background-color: black;}
+		#menu-div {position: absolute; pointer-events: none;}
+		#menu-div * {pointer-events: auto; font-family: Elected Office, Arial; border-radius: 0.01em;}
+		@media screen and (orientation: landscape) {#game-div, #game-div > canvas, #menu-div {height: 100vh; width: 133vh; font-size: 100vh}
+													#game-div:fullscreen #menu-div {left: 50%; transform: translateX(-50%);}}
+		@media screen and (orientation: portrait ) {#game-div, #game-div > canvas, #menu-div {width: 100vw; height: 75vw; font-size: 75vw}}
+		@font-face {font-family: "Elected Office"; src: url("fonts/elected-office.regular.ttf");}
+		@font-face {font-family: "Elected Office Outline"; src: url("fonts/elected-office.outline.ttf");}
+		</style>
+		<script src="menuUtils2.js"></script>
+		<script src="data.js"></script>
+		<script src="sprite.js"></script>
+	</head>
+	<body>
+		<div id="eee">
+			<div id="game-div">
+				<!--canvas-->
+				<div id="menu-div"></div>
+			</div>
+		</div>
+		<button onclick="switchFullscreen()">Plein écran</button>
+		<button onclick="switchInputMode(); this.textContent=isTactile?'Mode clavier':'Mode tactile';">Mode tactile</button>
+		<span style="font-family: Elected Office;"></span>
+		<span style="font-family: Elected Office Outline;"></span>
+		<script src="simplegame.js"></script>
+	</body>
+</html>

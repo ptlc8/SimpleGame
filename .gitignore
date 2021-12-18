@@ -1,0 +1,5 @@
+server/players/*
+server/.settings
+server/target
+electron/dist
+electron/SG-win32-x64

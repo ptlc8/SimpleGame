@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="fr/ptlc/swssg/" kind="src" output="target/classes" path="src">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/Kevin/JAVA librairies/Java-WebSocket-1.3.9.jar" sourcepath="javadoc">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Users/Kevin/JAVA%20librairies/Java-WebSocket-1.3.9-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/Kevin/JAVA librairies/gson-2.8.5.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Kevin/JAVA librairies/flexjson-2.1.jar"/>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>

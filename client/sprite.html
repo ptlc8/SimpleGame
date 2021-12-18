@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<link rel="shortcut icon" href="iron_helmet.ico" />
+		<title>Sprite Genarator</title>
+		<script src="sprite.js"></script>
+	</head>
+	<body style="margin: 0; background-color: darkslategrey;">
+		<img id="sprite-generator" style="width: 80vmin; height: 80vmin; image-rendering: pixelated;" />
+		<br />
+		<form onchange="refresh(classname.value, head.value, chest.value, legs.value, foot.value, hand.value)">
+			<select name="classname">
+				<option value="guerrier">Guerrier</option>
+				<option value="archer">Archer</option>
+				<option value="golem">Golem</option>
+				<option value="mage">Mage</option>
+				<option value="assassin">Assassin</option>
+				<option value="necromancien">Nécromancien</option>
+				<option value="alchimiste">Alchimiste</option>
+			</select>
+			<input type="text" name="head" value="iron_helmet" />
+			<input type="text" name="chest" value="" />
+			<input type="text" name="legs" value="" />
+			<input type="text" name="foot" value="iron_boots" />
+			<input type="text" name="hand" value="orange_juice" />
+		</form>
+		<script>
+			function refresh(className, head, chest, legs, foot, hand) {
+				getSprite(className, head, chest, legs, foot, hand).then((data) => {document.getElementById('sprite-generator').src = data});
+			}
+			window.onload = refresh('guerrier');
+		</script>
+	</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>Vectoriz</title>
+	</head>
+	<body>
+		<input type="text" id="image-src" placeholder="image.png" onchange="image.src = this.value; image.onload = refresh;" value="assets/classes/guerrier.png" />
+		<input type="number" id="cutX" placeholder="origine X" onchange="cutX = this.value=='' ? null : parseInt(this.value); refresh();" />
+		<input type="number" id="cutY" placeholder="origine Y" onchange="cutY = this.value=='' ? null : parseInt(this.value); refresh();" />
+		<input type="number" id="cutWidth" placeholder="largeur" onchange="cutWidth = this.value=='' ? null : parseInt(this.value); refresh();" />
+		<input type="number" id="cutHeight" placeholder="hauteur" onchange="cutHeight = this.value=='' ? null : parseInt(this.value); refresh();" />
+		<input type="checkbox" id="isMap" onchange="isMap = this.checked; refresh();" />
+		<button onclick="image.src = document.getElementById('image-src').value; image.onload = refresh;">Charger</button>
+		<br />
+		<canvas id="aff">ERREUR</canvas>
+		<br />
+		<div id="mainShape">
+			mainShape :
+			<input type="number" placeholder="x" onchange="hitbox.mainShape.x = parseInt(this.value); refresh();" />
+			<input type="number" placeholder="y" onchange="hitbox.mainShape.y = parseInt(this.value); refresh();" />
+			<input type="number" name="" placeholder="width" onchange="hitbox.mainShape.width = parseInt(this.value); refresh();" />
+			<input type="number" name="" placeholder="height" onchange="hitbox.mainShape.height = parseInt(this.value); refresh();" />
+		</div>
+		<ul id="shapes" style="margin: 4px 0;">
+			
+		</ul>
+		<button onclick="addShape()">Ajouter une forme</button>
+		<br />
+		<textarea id="json" placeholder="Hitbox en JSON" onchange="hitbox = JSON.parse(this.value); refresh();">[]</textarea>
+		<script>
+			let image = new Image();
+			let hitbox = {class:"fr.ptlc.SGServer.Hitbox", mainShape:{class:"fr.ptlc.SGServer.Rectangle"}, shapes:[]};
+			let cutX = cutY = cutWidth = cutHeight = null;
+			let isMap = false
+			function refresh() {
+				var canvas = document.getElementById('aff');
+				ctx = canvas.getContext('2d');
+				if (cutX != null && cutY != null && cutWidth != null && cutHeight != null) {
+					canvas.height = cutHeight;
+					canvas.width = cutWidth;
+					ctx.drawImage(image, cutX, cutY, cutWidth, cutHeight, 0, 0, cutWidth, cutHeight);
+				} else {
+					canvas.height = image.height;
+					canvas.width = image.width;
+					ctx.drawImage(image, 0, 0);
+				}
+				//----draw mainShape
+				ctx.fillStyle = "rgba(255, 32, 32, 0.5)";
+				ctx.beginPath();
+				ctx.rect(hitbox.mainShape.x+(!isMap?canvas.width/2:0), hitbox.mainShape.y+(!isMap?canvas.height/2:0), hitbox.mainShape.width, hitbox.mainShape.height);
+				ctx.fill();
+				//----draw shapes
+				ctx.fillStyle = "rgba(128, 128, 128, 0.5)";
+				for (let i = 0; i < hitbox.shapes.length; i++) {
+					let shape = hitbox.shapes[i];
+					ctx.beginPath();
+					switch(shape.class.replace("fr.ptlc.SGServer.", "")) {
+					case "Circle":
+						ctx.ellipse(shape.x+(!isMap?canvas.width/2:0), shape.y+(!isMap?canvas.height/2:0), shape.r, shape.r, 0, 0, Math.PI*2);
+						ctx.fill();
+						break;
+						case "Rectangle":
+						ctx.rect(shape.x+(!isMap?canvas.width/2:0), shape.y+(!isMap?canvas.height/2:0), shape.width, shape.height);
+						ctx.fill();
+						break;
+					}	
+				}
+				document.getElementById("json").value = JSON.stringify(hitbox);
+			}
+			function addShape() {
+				var i = hitbox.shapes.length;
+				hitbox.shapes.push({class:"fr.ptlc.SGServer.Rectangle", x:0, y:0, width:0, height:0, r:0});
+				let li = document.createElement("li");
+				li.id = "shape"+i;
+				li.index = i;
+				li.innerHTML = 'shapes['+i+'] : '
+					+'<button onclick="removeShape(this.parentElement.index)">suppr.</button>'
+					+'<select onchange="hitbox.shapes[this.parentElement.index].class = \'fr.ptlc.SGServer.\'+this.value; refresh();">'
+					+'<option value="Rectangle">Rectangle</option>'
+					+'<option value="Circle">Cercle</option>'
+					+'</select>'
+					+'<input type="number" placeholder="x" onchange="hitbox.shapes[this.parentElement.index].x = parseInt(this.value); refresh();" />'
+					+'<input type="number" placeholder="y" onchange="hitbox.shapes[this.parentElement.index].y = parseInt(this.value); refresh();" />'
+					+'<input type="number" placeholder="width" onchange="hitbox.shapes[this.parentElement.index].width = parseInt(this.value); refresh();" />'
+					+'<input type="number" placeholder="height" onchange="hitbox.shapes[this.parentElement.index].height = parseInt(this.value); refresh();" />'
+					+'<input type="number" placeholder="rayon" onchange="hitbox.shapes[this.parentElement.index].r = parseInt(this.value); refresh();" />';
+				document.getElementById("shapes").appendChild(li);
+				refresh();
+			}
+			function removeShape(index) {
+				hitbox.shapes.splice(index, 1);
+				let li = document.getElementById("shape"+index);
+				let ul = li.parentElement;
+				ul.removeChild(li);
+				for (var i = 0; i < ul.children.length; i++) {
+					ul.children[i].id = "shape"+i;
+					ul.children[i].index = i;
+					ul.children[i].childNodes[0].data = "shapes["+i+"] : ";
+				}
+				refresh();
+			}
+		</script>
+	</body>
+</html>

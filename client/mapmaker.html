@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Création de carte SG</title>
+        <meta charset="UTF-8" />
+        <script src="menuUtils.js"></script>
+        <link rel="stylesheet" href="mapmaker.css" />
+    </head>
+    <body>
+        <div id="main">
+        <div id="left">
+            <canvas id="preview">preview</canvas>
+            <div id="teams">Noms des équipes :</div>
+        </div>
+        <div id="right">
+            <div id="frags-container">
+                <canvas id="frags" onclick="selFrag(event)">frags</canvas>
+            </div>
+            <div id="edit-zone">
+                <div id="top-sizing-buttons">
+                    <button class="sizing" onclick="addLignTop()">+</button>
+                    <button class="sizing" onclick="removeLignTop()">—</button>
+                </div>
+                <div id="left-sizing-buttons">
+                    <button class="sizing" onclick="addColLeft()">+</button>
+                    <br />
+                    <button class="sizing" onclick="removeColLeft()">—</button>
+                </div>
+                <div id="edit-box">
+                    <canvas id="edit" onclick="edit(event)">EDIT</canvas>
+                </div>
+                <div id="right-sizing-buttons">
+                    <button class="sizing" onclick="addColRight()">+</button>
+                    <br />
+                    <button class="sizing" onclick="removeColRight()">—</button>
+                </div>
+                <div id ="bottom-sizing-buttons">
+                    <button class="sizing" onclick="addLignBottom()">+</button>
+                    <button class="sizing" onclick="removeLignBottom()">—</button>
+                </div>
+            </div>
+        </div>
+        </div>
+        <div id="bottom">
+            <textarea id="result">thinking…</textarea>
+            <button class="result-button" onclick="copy ()" style ="bottom:5%">Copier</button>
+            <button class="result-button" onclick="loadFromJson()">Charger</button>
+        </div>
+        <script>
+
+var map;
+var image;
+var frag;
+var first = -8 // selon map.png
+var linesNb = 6 // selon map.png
+onload = function() {
+    map = JSON.parse("{\"teams\":[\"rouge\"],\"pattern\":[[0,2],[2,1]]}");
+    image = new Image();
+    image.src = 'assets/map.png';
+    frag = 0;
+    image.onload = function() {
+        loadFrags();
+        loadFromMap();
+    };
+}
+function selFrag(e) {
+    frag = Math.floor(getPos(e).x/64)+first;
+    loadFrags();
+}
+function loadFromMap() {
+    var edit = document.getElementById("edit");
+    edit.height = map.pattern.length*64;
+    edit.width = map.pattern.length==0?0:map.pattern[0].length*64;
+    var ctx = edit.getContext("2d");
+    var spawnNb = 0;
+    for (var i = 0; i < map.pattern.length; i++)
+        for (var j = 0; j < map.pattern[i].length; j++) {
+            ctx.drawImage(image, (map.pattern[i][j]-first)%4*64,Math.floor((map.pattern[i][j]-first)/4)*64,64,64, j*64,i*64,64,64);
+            if (map.pattern[i][j] == 1) spawnNb++;
+        }
+    refreshMapPreview("preview", map.pattern, 4);
+    while (map.teams.length < spawnNb)
+        map.teams.push("");
+    while (map.teams.length > spawnNb)
+        map.teams.pop();
+    while (document.querySelectorAll("#team-name").length < map.teams.length) {
+        var teamName = document.createElement("input");
+        teamName.setAttribute("id", "team-name");
+        teamName.setAttribute("onchange", "setTeamName("+document.querySelectorAll("#team-name").length+", this.value)");
+        document.getElementById("teams").appendChild(teamName);
+    }
+    var teamsNames =  document.querySelectorAll("[id^=team-name]");
+    while (teamsNames.length > map.teams.length) {
+        var teamName = teamsNames[teamsNames.length-1];
+        teamName.parentElement.removeChild(teamName);
+        teamsNames =  document.querySelectorAll("[id^=team-name]");
+    }
+    document.getElementById("result").value = JSON.stringify(map);
+}
+function loadFrags() {
+    var frags = document.getElementById("frags");
+    if (frags.getContext) {
+        frags.height = 64;
+        frags.width = 64*linesNb*4;
+        var ctx = frags.getContext("2d");
+        ctx.clearRect(0, 0, frags.width, frags.height);
+        for (var i = 0; i < linesNb; i++)
+            for (var j = 0; j < 4; j++)
+                ctx.drawImage(image, j*64,i*64,64,64, (i*4+j)*64,0,64,64);
+        ctx.strokeStyle = "red";
+        ctx.rect((frag-first)*64, 0, 64, 64);
+        ctx.stroke();
+    } else {
+        alert("canvas non-supportés");
+    }
+}
+function edit(e) {
+    var pos = getPos(e);
+    map.pattern[Math.floor(pos.y/64)][Math.floor(pos.x/64)] = frag;
+    loadFromMap();
+}
+function getPos(e) {
+    var rect = e.target.getBoundingClientRect();
+    return {'x': e.clientX - rect.left, 'y': e.clientY - rect.top};
+}
+function addLignBottom() {
+    var newLign = [];
+    for (var i = 0; i < map.pattern[0].length; i++)
+        newLign.push(0);
+    map.pattern.push(newLign);
+    loadFromMap();
+}
+function addLignTop() {
+    var newLign = [];
+    for (var i = 0; i < map.pattern[0].length; i++)
+        newLign.push(0);
+    map.pattern.unshift(newLign);
+    loadFromMap();
+}
+function removeLignBottom() {
+    if (map.pattern.length <= 1) return;
+    map.pattern.pop();
+    loadFromMap();
+}
+function removeLignTop() {
+    if (map.pattern.length <= 1) return;
+    map.pattern.shift();
+    loadFromMap();
+}
+function addColLeft() {
+    for (var i = 0; i < map.pattern.length; i++)
+        map.pattern[i].unshift(0);
+    loadFromMap();
+}
+function addColRight() {
+    for (var i = 0; i < map.pattern.length; i++)
+        map.pattern[i].push(0);
+    loadFromMap();
+}
+function removeColLeft() {
+    for (var i = 0; i < map.pattern.length; i++)
+        map.pattern[i].shift();
+    loadFromMap();
+}
+function removeColRight() {
+    for (var i = 0; i < map.pattern.length; i++)
+        map.pattern[i].pop();
+    loadFromMap();
+}
+function copy() {
+    document.getElementById("result").select();
+    document.execCommand("copy");
+}
+function loadFromJson() {
+    map = JSON.parse(document.getElementById("result").value);
+    loadFromMap();
+}
+function setTeamName(n, value) {
+    map.teams[n] = value;
+    loadFromMap();
+}
+
+        </script>
+    </body>
+</html>

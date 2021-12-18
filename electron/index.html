@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<script src='phaser.js'></script>
+		<link rel="stylesheet" href="style.css" />
+		<script src="menuUtils2.js"></script>
+		<script src="data.js"></script>
+		<script src="sprite.js"></script>
+		<script src="discord.js"></script>
+	</head>
+	<body>
+		<div id="title-bar">
+			<span id="title-bar-button">SIMPLEGAME ? BRAWLARENA ? ZIBUS ?</span>
+			<svg id="title-bar-min">
+				<line x1="1" y1="6" x2="11" y2="6" stroke="#ffffff"></line>
+			</svg>
+			<div id="title-bar-max">
+				<svg id="title-bar-max-max">
+					<rect id="" width="10" height="10" x="1" y="1" fill="none" stroke="#ffffff"></rect>
+				</svg>
+				<svg id="title-bar-max-mid">
+					<rect width="7" height="6" x="1" y="5" fill="none" stroke="#ffffff"></rect>
+					<rect width="6" height="6" x="5" y="1" fill="none" stroke="#ffffff" stroke-dasharray="14 7 3"></rect>
+				</svg>
+			</div>
+			<svg id="title-bar-full" aria-hidden="false" width="12" height="12" viewBox="0 0 12 12">
+				<rect width="10" height="10" x="1" y="1" fill="none" stroke="#ffffff" stroke-dasharray="3 4 3 0"></rect>
+			</svg>
+			<svg id="title-bar-close" aria-hidden="false" width="12" height="12" viewBox="0 0 12 12">
+				<line x1="1" y1="1" x2="11" y2="11" stroke="#ffffff"></line>
+				<line x1="11" y1="1" x2="1" y2="11" stroke="#ffffff"></line>
+			</svg>
+		</div>
+		<div id="game-div">
+			<!--canvas-->
+			<div id="menu-div"></div>
+		</div>
+		<span style="font-family: Elected Office;"></span>
+		<span style="font-family: Elected Office Outline;"></span>
+		<script src="simplegame.js"></script>
+		<script>
+			const remote = require('electron').remote;
+			
+			document.getElementById('title-bar-min').addEventListener("click", (e) => remote.getCurrentWindow().minimize());
+			
+			function refreshTitleBar() {
+				var window = remote.getCurrentWindow();
+				document.getElementById("title-bar-max-max").style.display =  window.isMaximized() ? "none" : "block";
+				document.getElementById("title-bar-max-mid").style.display = window.isMaximized() ? "block" : "none";	
+			}
+			
+			refreshTitleBar();
+			
+			document.getElementById('title-bar-max').addEventListener("click", (e) => {
+				var window = remote.getCurrentWindow();
+				if (!window.isMaximized()) window.maximize()
+				else window.unmaximize();
+				refreshTitleBar();
+			});
+			
+			document.getElementById('title-bar-full').addEventListener('click', (e) => switchFullscreen());
+			
+			document.getElementById('title-bar-close').addEventListener("click", (e) => remote.getCurrentWindow().close()); 
+		</script>
+	</body>
+</html>

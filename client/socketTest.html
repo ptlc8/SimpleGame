@@ -1,0 +1,48 @@
+<!DOCTYPE>
+<html>
+	<head>
+		<meta charset='UTF-8' />
+		<title>SimpleGame 0.1.0</title>
+	</head>
+	<body>
+		<input type='text' id='ipport' placeholder='xxx.xxx.xxx.xxx:xxxxx' onkeyup="if (event.keyCode == 13) connect(this.value);" />
+		<input type='button' value='Connect' onclick='connect(document.getElementById("ipport").value);' />
+		<input type='text' id='command' onkeyup="if (event.keyCode == 13) connection.send(this.value)" />
+		<input type='button' value='Send' onclick='connection.send(document.getElementById("command").value);' />
+		<input type='button' value='<' onclick='connection.send("move {\"move\":true, \"direction\":4.8}");' />
+		<input type='button' value='v' onclick='connection.send("move {\"move\":true, \"direction\":0}");' />
+		<input type='button' value='>' onclick='connection.send("move {\"move\":true, \"direction\":1.6}");' />
+		<input type='button' value='^' onclick='connection.send("move {\"move\":true, \"direction\":3.1415}");' />
+		<input type='button' value='x' onclick='connection.send("move {\"move\":false}");' />
+		<div id='aff'></div>
+		<script>
+
+function print(msg) {
+	document.getElementById("aff").innerHTML += msg + "<br />";
+}
+
+var connection;
+
+function connect(ipport) {
+	connection = new WebSocket('ws://'+ipport);
+	
+	// On successful connection
+	connection.onopen = function () {
+    print('Connected!');
+    connection.send('ping'); // Send the message 'Ping' to the server
+	};
+	
+	// Log errors
+	connection.onerror = function (error) {
+		print('WebSocket Error ' + error);
+	};
+	
+	// Log messages from the server
+	connection.onmessage = function (e) {
+		print('Server: ' + e.data);
+	};
+}
+
+		</script>
+	</body>
+</html>
